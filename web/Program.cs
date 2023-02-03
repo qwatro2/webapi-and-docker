@@ -1,13 +1,15 @@
 using System.Diagnostics;
-using web;
 
-class Program
+namespace web;
+
+internal static class Program
 {
+    private const string DockerUpCommand = "-f docker-compose.Development.yml up -d";
+    private const string DockerDownCommand = "-f docker-compose.Development.yml down";
+    
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
-
-        // Add services to the container.
 
         builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();
@@ -17,15 +19,13 @@ class Program
             builder.Configuration.GetSection(nameof(PostgresOptions)));
 
         var app = builder.Build();
-
+        
         if (builder.Environment.IsDevelopment())
         {
-            const string dockerUpCommand = "-f docker-compose.Development.yml up -d";
-            const string dockerDownCommand = "-f docker-compose.Development.yml down";
-            
-            ExecuteCommand(dockerUpCommand);
+
+            app.Lifetime.ApplicationStopped.Register(() => ExecuteCommand(DockerDownCommand));
+            ExecuteCommand(DockerUpCommand);
             RegisterApp(app);
-            ExecuteCommand(dockerDownCommand);
         }
         else
         {
