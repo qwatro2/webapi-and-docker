@@ -1,0 +1,36 @@
+version: "3.9"
+
+services: 
+  db:
+    image: postgres
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USERNAME: postgres
+      POSTGRES_DB: postgres
+    networks:
+      - my-network
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+  
+  my_service:
+    build:
+      dockerfile: web/Dockerfile
+    ports:
+      - "82:80"
+    depends_on: 
+      - db
+    networks:
+      - my-network
+    restart: on-failure
+    
+        
+networks:
+  my-network:
+    name: my-network
+    driver: bridge
+        
+volumes: 
+  pg_data:
+    
