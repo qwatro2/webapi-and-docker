@@ -25,7 +25,7 @@ class Program
             
             ExecuteCommand(dockerUpCommand);
             RegisterApp(app);
-            // ExecuteCommand(dockerDownCommand);
+            ExecuteCommand(dockerDownCommand);
         }
         else
         {
@@ -44,28 +44,17 @@ class Program
 
     private static void ExecuteCommand(string command)
     {
-        var processInfo = new ProcessStartInfo("docker-compose", command)
+        using (var process = new Process
+               {
+                   StartInfo =
+                   {
+                       FileName = "docker-compose",
+                       WorkingDirectory = @"C:\Users\Public\prog\hse\ср доскер\web",
+                       Arguments = command
+                   }
+               })
         {
-            CreateNoWindow = true,
-            UseShellExecute = false,
-            RedirectStandardOutput = true,
-            RedirectStandardError = true
-        };
-
-        int exitCode;
-        using (var process = new Process())
-        {
-            process.StartInfo = processInfo;
             process.Start();
-            process.BeginOutputReadLine();
-            process.BeginErrorReadLine();
-            process.WaitForExit(1200000);
-            if (!process.HasExited)
-            {
-                process.Kill();
-            }
-
-            exitCode = process.ExitCode;
             process.Close();
         }
     }
