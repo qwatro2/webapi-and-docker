@@ -1,0 +1,36 @@
+﻿docker run --hostname=2391d82043b6 --env=POSTGRES_DB=postgres --env=POSTGRES_PASSWORD=postgres --env=POSTGRES_USERNAME=postgres --env=PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/lib/postgresql/15/bin --env=GOSU_VERSION=1.14 --env=LANG=en_US.utf8 --env=PG_MAJOR=15 --env=PG_VERSION=15.1-1.pgdg110+1 --env=PGDATA=/var/lib/postgresql/data --volume=/var/lib/postgresql/data --network=my-network -p 5433:5432 --label='com.docker.compose.config-hash=3dae1afe66725798afddd0bf7a59cc28b16a12223a1a6e741fbf9c8956f36320' --label='com.docker.compose.container-number=1' --label='com.docker.compose.depends_on=' --label='com.docker.compose.image=sha256:9f3ec01f884db0c4e6b637c730043ad1ac9dcaa684e8fa5b858ddf72a3848ddf' --label='com.docker.compose.oneoff=False' --label='com.docker.compose.project=web' --label='com.docker.compose.project.config_files=C:\Users\Public\prog\hse\ср доскер\web\docker-compose.yml' --label='com.docker.compose.project.working_dir=C:\Users\Public\prog\hse\ср доскер\web' --label='com.docker.compose.service=db' --label='com.docker.compose.version=2.13.0' --runtime=runc -d postgres
+
+docker run --hostname=f0d1c4293fdb --env=PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin --env=ASPNETCORE_URLS=http://+:80 --env=DOTNET_RUNNING_IN_CONTAINER=true --env=DOTNET_VERSION=6.0.13 --env=ASPNET_VERSION=6.0.13 --network=my-network --workdir=/app -p 82:80 --restart=on-failure:0 --label='com.docker.compose.config-hash=fcf0d42e3a747f7466bfabe381475098c413fb48c2e5fe1dd6d6662e1acc17df' --label='com.docker.compose.container-number=1' --label='com.docker.compose.depends_on=db:service_started' --label='com.docker.compose.image=sha256:22e5c618d4932caf98045ccd3c2cfb2c22b29f41ec10eaf05af86db82df33000' --label='com.docker.compose.oneoff=False' --label='com.docker.compose.project=web' --label='com.docker.compose.project.config_files=C:\Users\Public\prog\hse\ср доскер\web\docker-compose.yml' --label='com.docker.compose.project.working_dir=C:\Users\Public\prog\hse\ср доскер\web' --label='com.docker.compose.service=my_service' --label='com.docker.compose.version=2.13.0' --runtime=runc -d web-my_service
+
+docker run --hostname=3801c3918eed --env=POSTGRES_USERNAME=postgres --env=POSTGRES_DB=postgres --env=POSTGRES_PASSWORD=postgres --env=PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/lib/postgresql/15/bin --env=GOSU_VERSION=1.16 --env=LANG=en_US.utf8 --env=PG_MAJOR=15 --env=PG_VERSION=15.1-1.pgdg110+1 --env=PGDATA=/var/lib/postgresql/data --volume=/var/lib/postgresql/data --network=my-network -p 5433:5432 --label='com.docker.compose.config-hash=3dae1afe66725798afddd0bf7a59cc28b16a12223a1a6e741fbf9c8956f36320' --label='com.docker.compose.container-number=1' --label='com.docker.compose.depends_on=' --label='com.docker.compose.image=sha256:387fe63603d146147b8dc4338a6ac7a9f68633d8d0974775219764198001862c' --label='com.docker.compose.oneoff=False' --label='com.docker.compose.project=web' --label='com.docker.compose.project.config_files=C:\Users\Public\prog\hse\ср доскер\web\docker-compose.yml' --label='com.docker.compose.project.working_dir=C:\Users\Public\prog\hse\ср доскер\web' --label='com.docker.compose.service=db' --label='com.docker.compose.version=2.13.0' --runtime=runc -d postgres
+
+
+create table if not exists arguments
+(
+    id              bigserial
+        primary key,
+    first_argument  double precision,
+    second_argument double precision,
+    operation       varchar
+);
+
+alter table arguments
+    owner to postgres;
+
+
+create table if not exists requests
+(
+    id           bigserial
+        primary key,
+    request_type varchar not null,
+    request_name varchar not null,
+    arguments_id bigint
+        references arguments,
+    result       jsonb   not null,
+    status_code  integer not null,
+    date         timestamp default now()
+);
+
+alter table requests
+    owner to postgres;
+
