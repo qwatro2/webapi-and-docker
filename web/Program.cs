@@ -1,5 +1,3 @@
-using System.Diagnostics;
-
 namespace web;
 
 internal static class Program
@@ -14,48 +12,22 @@ internal static class Program
         builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
-
+        
         builder.Services.Configure<PostgresOptions>(
             builder.Configuration.GetSection(nameof(PostgresOptions)));
-
-        var app = builder.Build();
         
+        var app = builder.Build();
+
         if (builder.Environment.IsDevelopment())
         {
-
-            app.Lifetime.ApplicationStopped.Register(() => ExecuteCommand(DockerDownCommand));
-            ExecuteCommand(DockerUpCommand);
-            RegisterApp(app);
+            app.Lifetime.ApplicationStarted.Register(() => Solver.ExecuteCommand(DockerUpCommand));
+            app.Lifetime.ApplicationStopped.Register(() => Solver.ExecuteCommand(DockerDownCommand));
         }
-        else
-        {
-            RegisterApp(app);
-        }
-    }
-
-    private static void RegisterApp(WebApplication app)
-    {
+        
         app.UseSwagger();
         app.UseSwaggerUI();
         app.UseAuthorization();
         app.MapControllers();
         app.Run();
-    }
-
-    private static void ExecuteCommand(string command)
-    {
-        using (var process = new Process
-               {
-                   StartInfo =
-                   {
-                       FileName = "docker-compose",
-                       WorkingDirectory = @"C:\Users\Public\prog\hse\ср доскер\web",
-                       Arguments = command
-                   }
-               })
-        {
-            process.Start();
-            process.Close();
-        }
     }
 }
