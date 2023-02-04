@@ -23,7 +23,7 @@ internal static class Program
             app.Lifetime.ApplicationStarted.Register(() => Solver.ExecuteCommand(DockerUpCommand));
             app.Lifetime.ApplicationStopped.Register(() => Solver.ExecuteCommand(DockerDownCommand));
         }
-        
+
         app.UseSwagger();
         app.UseSwaggerUI();
         app.UseAuthorization();
